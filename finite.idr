@@ -6,8 +6,8 @@ module Finmath.Finite
 
 ||| Map an element of either of two sets, into their Cartesian sum
 fSetSum : Either (Fin n) (Fin m) -> Fin (n + m)
-fSetSum (Left fZ) = fZ
-fSetSum (Left (fS k)) = fS (fSetSum (Left k))
+fSetSum (Left fZ)               = fZ
+fSetSum (Left (fS k))           = fS (fSetSum (Left k))
 fSetSum {n=Z} (Right right)     = right
 fSetSum {n=(S k)} (Right right) = fS (fSetSum {n=k} (Right right))
 
@@ -18,7 +18,7 @@ fSetProduct {n=(S k)} ((fS left), right) = fSetSum (Right (fSetProduct (left, ri
 
 ||| The inverse map of fSetSum
 fSetSumInv : Fin (n + m) -> Either (Fin n) (Fin m)
-fSetSumInv {n=Z} x = Right x
+fSetSumInv {n=Z} x      = Right x
 fSetSumInv {n=(S k)} fZ = Left fZ
 fSetSumInv {n=(S k)} (fS c) with (fSetSumInv {n=k} c)
                                  | Left a = Left (fS a)

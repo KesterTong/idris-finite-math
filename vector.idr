@@ -8,12 +8,12 @@ import Finite
 ||| Map from a vector to a function on a finite set
 ||| Note that this is the Prelude.Vect.index with the arguments reversed.
 vectToMap : Vect n a -> Fin n -> a
-vectToMap (x :: xs) fZ = x
+vectToMap (x :: xs) fZ     = x
 vectToMap (x :: xs) (fS k) = vectToMap xs k
 
 ||| The inverse of vectToMap
 mapToVect : (Fin n -> a) -> Vect n a
-mapToVect {n=Z} f = []
+mapToVect {n=Z} f     = []
 mapToVect {n=(S k)} f = (f fZ) :: (mapToVect (f . fS))
 
 --------------------------------------------------------------------------------
