@@ -32,7 +32,7 @@ split {n}{m} v = let f = (vectToMap v) . (fSetSum {m=m}{n=n}) in
 
 ||| Unflattens a vector
 unFlatten : Vect (n * m) a -> Vect n (Vect m a)
-unFlatten v = let f = \x => (\y => (vectToMap v) (fSetProduct (x,y))) in
+unFlatten v = let f = \x => \y => (vectToMap v) (fSetProduct (x,y)) in
   mapToVect (mapToVect . f)
 
 
