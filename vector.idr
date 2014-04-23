@@ -1,6 +1,6 @@
-module FinMath.Vector
+module Finmath.Vector
 
-import FinMath.Finite
+import Finite
 --------------------------------------------------------------------------------
 -- Equivalence of vectors and maps on finite sets
 --------------------------------------------------------------------------------
@@ -20,6 +20,12 @@ mapToVect {n=(S k)} f = (f fZ) :: (mapToVect (f . fS))
 -- Operations on vectors derived from operations on finite sets by duality
 --------------------------------------------------------------------------------
 
-||| Combines two vectors
-vectCombine : Vect n a -> Vect m a -> Vect (n + m)  a
-vectCombine v w = mapToVect ((either (vectToMap v) (vectToMap w)) . fSetSumInv)
+||| Concatenates two vectors
+concat : Vect n a -> Vect m a -> Vect (n + m) a
+concat v w = mapToVect ((either (vectToMap v) (vectToMap w)) . fSetSumInv)
+
+||| Splits a vector
+split : Vect (n + m) a -> (Vect n a, Vect m a)
+split {n}{m} v = let f = (vectToMap v) . (fSetSum {m=m}{n=n}) in
+  (mapToVect (f . Left), mapToVect (f . Right))
+
