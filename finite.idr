@@ -47,4 +47,9 @@ lteN n = (rewrite (fEq (\k => LTE n k) _ _ (plusCommutative 0 n)) in
   (rewrite (fEq (\k => LTE k (n + 0)) _ _ (plusCommutative 0 n)) in 
     (ltePlus (lteZero {right=Z}) n)))
 
+||| Proof that if n <= m and m <= l then n <= l
+lteTrans : LTE n m -> LTE m l -> LTE n l
+lteTrans lteZero _                = lteZero
+lteTrans (lteSucc w) (lteSucc w') = lteSucc (lteTrans w w')
+
 

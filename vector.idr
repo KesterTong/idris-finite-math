@@ -35,4 +35,17 @@ unFlatten : Vect (n * m) a -> Vect n (Vect m a)
 unFlatten v = let f = \x => \y => (vectToMap v) (fSetProduct (x,y)) in
   mapToVect (mapToVect . f)
 
+--------------------------------------------------------------------------------
+-- Misc vector operations
+--------------------------------------------------------------------------------
+
+||| like Prelude.Vect.findIndices but using Fin, not Nat
+findIndices' : (a -> Bool) -> Vect m a -> (p ** Vect p (Fin m))
+findIndices' p [] = (_ ** [])
+findIndices' p (x::xs) with (findIndices' p xs)
+      | (_ ** tail) =
+       if p x then
+        (_ ** fZ::(map fS tail))
+       else
+        (_ ** (map fS tail))
 
