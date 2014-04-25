@@ -52,4 +52,27 @@ lteTrans : LTE n m -> LTE m l -> LTE n l
 lteTrans lteZero _                = lteZero
 lteTrans (lteSucc w) (lteSucc w') = lteSucc (lteTrans w w')
 
+||| Dichotomy for lte
+lteDichotomy : LTE n m -> Either (n = m) (LT n m)
+lteDichotomy (lteZero {right=Z}) = Left refl
+lteDichotomy (lteZero {right=(S k)}) = Right (lteSucc lteZero)
+lteDichotomy (lteSucc p) = f (lteDichotomy p)
+  where f : Either (l = k) (LT l k) -> Either ((S l) = (S k)) (LT (S l) (S k))
+        f (Left p) = Left (eqSucc _ _ p)
+        f (Right p) = Right (lteSucc p)
+
+||| Dichotomy
+dichotomy : (n : Nat) -> (m : Nat) -> Either (LTE n m) (LT m n)
+dichotomy Z _ = Left lteZero
+dichotomy (S k) Z = Right (lteSucc lteZero)
+dichotomy (S l) (S k) = f (dichotomy l k)
+  where f : Either (LTE l k) (LT k l) -> Either (LTE (S l) (S k)) (LT (S k) (S l))
+        f (Left p) = Left (lteSucc p)
+        f (Right p) = Right (lteSucc p)
+
+||| Trichotomy
+trichotomy : (n : Nat) -> (m : Nat) -> Either (Either (n = m) (LT n m)) (LT m n)
+trichotomy n m with (dichotomy n m)
+                                 | Left a = Left (lteDichotomy a)
+                                 | Right b = Right b
 

@@ -49,3 +49,26 @@ findIndices' p (x::xs) with (findIndices' p xs)
        else
         (_ ** (map fS tail))
 
+
+
+-- Heterogeneous (Mixed) Tuples
+
+--Mixed tuple of order k
+MixedTuple : (Fin k -> Type) -> Type
+MixedTuple sig = (i : Fin _) -> sig i
+
+--Pullback of dependent function
+pullback : (a -> b) -> (b -> c) -> (a -> c)
+pullback f = \g => g . f
+
+pullback' : (s : a -> Type) -> (s' : b -> Type) -> (f : a -> b) -> s = s' . f -> ((y : b) -> s' y) -> ((x : a) -> s x)
+pullback' s s' f p = \g => \x => rewrite p in (g (f x)) 
+
+--(Unknown name) mapping from mixed tuples induced by mapping on signatures
+myMap : (s : Fin k -> Type) -> (s' : Fin k' -> Type) -> (f : Fin k -> Fin k') -> s = s' . f -> MixedTuple s' -> MixedTuple s
+myMap s s' f p g = pullback' s s' f p g
+
+
+NDVector : (Fin k -> Nat) -> Type -> Type
+NDVector s a = (MixedTuple (Fin . s)) -> a
+
