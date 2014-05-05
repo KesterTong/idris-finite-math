@@ -1,6 +1,15 @@
 module Finmath.Finite
 
 --------------------------------------------------------------------------------
+-- Relationship between Fin and LTE
+--------------------------------------------------------------------------------
+
+||| Map from n such that n < m to Fin m
+natToFin' : (n : Nat) -> LT n m -> Fin m
+natToFin' Z     (lteSucc lteZero)     = fZ
+natToFin' (S k) (lteSucc (lteSucc p)) = fS $ natToFin' k (lteSucc p)
+
+--------------------------------------------------------------------------------
 -- Cartesian sums and products of finite sets
 --------------------------------------------------------------------------------
 
@@ -13,14 +22,14 @@ fSetSum {n=(S k)} (Right right) = fS (fSetSum {n=k} (Right right))
 
 ||| Map a pair of elements from each of two sets, into their Cartesian product
 fSetProduct : (Fin n, Fin m) -> Fin (n * m)
-fSetProduct (fZ, right)                  = fSetSum (Left right)
-fSetProduct {n=(S k)} ((fS left), right) = fSetSum (Right (fSetProduct (left, right)))
+fSetProduct         (fZ, right)        = fSetSum (Left right)
+fSetProduct {n=S k} ((fS left), right) = fSetSum (Right (fSetProduct (left, right)))
 
 ||| The inverse map of fSetSum
 fSetSumInv : Fin (n + m) -> Either (Fin n) (Fin m)
-fSetSumInv {n=Z} x      = Right x
-fSetSumInv {n=(S k)} fZ = Left fZ
-fSetSumInv {n=(S k)} (fS c) with (fSetSumInv {n=k} c)
+fSetSumInv {n=Z}   x  = Right x
+fSetSumInv {n=S k} fZ = Left fZ
+fSetSumInv {n=S k} (fS c) with (fSetSumInv {n=k} c)
                                  | Left a = Left (fS a)
                                  | Right b = Right b
 
