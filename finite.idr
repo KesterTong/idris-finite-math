@@ -13,7 +13,7 @@ fSetSum {n=(S k)} (Right right) = fS (fSetSum {n=k} (Right right))
 
 ||| Map a pair of elements from each of two sets, into their Cartesian product
 fSetProduct : (Fin n, Fin m) -> Fin (n * m)
-fSetProduct (fZ, right) = fSetSum (Left right)
+fSetProduct (fZ, right)                  = fSetSum (Left right)
 fSetProduct {n=(S k)} ((fS left), right) = fSetSum (Right (fSetProduct (left, right)))
 
 ||| The inverse map of fSetSum
@@ -38,7 +38,7 @@ cong2 refl refl = refl
 
 ||| Proof that if n <=m then n + (m - n) = m
 |||
-||| This is useful for showing that if n <=m then there is a k such that
+||| This is useful for showing that if n <= m then there is a k such that
 ||| n + k = m.
 minusCancel : LTE n m -> n + (m - n) = m
 minusCancel lteZero     = minusZeroRight _
@@ -55,7 +55,7 @@ lteN n ?= ltePlus (lteZero {right=Z}) n
 
 ||| Proof that if n <= m and m <= l then n <= l
 lteTrans : LTE n m -> LTE m l -> LTE n l
-lteTrans lteZero _                = lteZero
+lteTrans lteZero     _            = lteZero
 lteTrans (lteSucc w) (lteSucc w') = lteSucc (lteTrans w w')
 
 ||| Dichotomy for lte
@@ -69,8 +69,8 @@ lteDichotomy (lteSucc p)             = f (lteDichotomy p)
 
 ||| Dichotomy
 dichotomy : (n : Nat) -> (m : Nat) -> Either (LTE n m) (LT m n)
-dichotomy Z _ = Left lteZero
-dichotomy (S k) Z = Right (lteSucc lteZero)
+dichotomy Z     _     = Left lteZero
+dichotomy (S k) Z     = Right (lteSucc lteZero)
 dichotomy (S l) (S k) = f (dichotomy l k)
   where f : Either (LTE l k) (LT k l) -> Either (LTE (S l) (S k)) (LT (S k) (S l))
         f (Left p) = Left (lteSucc p)
