@@ -4,10 +4,15 @@ module Finmath.Finite
 -- Relationship between Fin and LTE
 --------------------------------------------------------------------------------
 
-||| Map from n such that n < m to Fin m
-natToFin' : (n : Nat) -> LT n m -> Fin m
+||| Map from n such that n < k to Fin k
+natToFin' : (n : Nat) -> LT n k -> Fin k
 natToFin' Z     (lteSucc lteZero)     = fZ
-natToFin' (S k) (lteSucc (lteSucc p)) = fS $ natToFin' k (lteSucc p)
+natToFin' (S l) (lteSucc (lteSucc p)) = fS $ natToFin' l (lteSucc p)
+
+||| Map from n such that n < m to Fin m
+finToNatLt : (fn : Fin k) -> LT (finToNat fn) k
+finToNatLt fZ      = lteSucc lteZero
+finToNatLt (fS fm) = lteSucc (finToNatLt fm)
 
 --------------------------------------------------------------------------------
 -- Cartesian sums and products of finite sets
