@@ -36,6 +36,14 @@ cong2 refl refl = refl
 -- Theorems about inequality
 --------------------------------------------------------------------------------
 
+||| Proof that if n <=m then n + (m - n) = m
+|||
+||| This is useful for showing that if n <=m then there is a k such that
+||| n + k = m.
+minusCancel : LTE n m -> n + (m - n) = m
+minusCancel lteZero     = minusZeroRight _
+minusCancel (lteSucc p) = eqSucc _ _ (minusCancel p)
+
 ||| Proof that LTE respects adding a constant to both sides
 ltePlus : LTE m l -> (n : Nat) -> LTE (n + m) (n + l)
 ltePlus p Z     = p
