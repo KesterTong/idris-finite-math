@@ -29,11 +29,11 @@ fSetSumInv {n=(S k)} (fS c) with (fSetSumInv {n=k} c)
 --------------------------------------------------------------------------------
 
 ||| Functions respect equality
-fEq : (f : a -> b) -> (left : a) -> (right : a) -> (p : left = right) -> f left = f right
-fEq f left _ refl = refl
+cong2 : {f : t -> u -> v} -> (a = b) -> (a' = b') -> f a a' = f b b'
+cong2 refl refl = refl
 
 --------------------------------------------------------------------------------
--- Proofs about inequality
+-- Theorems about inequality
 --------------------------------------------------------------------------------
 
 ||| Proof that LTE respects adding a constant to both sides
@@ -43,9 +43,7 @@ ltePlus p (S k) = lteSucc (ltePlus p k)
 
 ||| Proof that n <= n
 lteN : (n : Nat) -> LTE n n
-lteN n = (rewrite (fEq (\k => LTE n k) _ _ (plusCommutative 0 n)) in 
-  (rewrite (fEq (\k => LTE k (n + 0)) _ _ (plusCommutative 0 n)) in 
-    (ltePlus (lteZero {right=Z}) n)))
+lteN n ?= ltePlus (lteZero {right=Z}) n
 
 ||| Proof that if n <= m and m <= l then n <= l
 lteTrans : LTE n m -> LTE m l -> LTE n l
@@ -54,9 +52,9 @@ lteTrans (lteSucc w) (lteSucc w') = lteSucc (lteTrans w w')
 
 ||| Dichotomy for lte
 lteDichotomy : LTE n m -> Either (n = m) (LT n m)
-lteDichotomy (lteZero {right=Z}) = Left refl
+lteDichotomy (lteZero {right=Z})     = Left refl
 lteDichotomy (lteZero {right=(S k)}) = Right (lteSucc lteZero)
-lteDichotomy (lteSucc p) = f (lteDichotomy p)
+lteDichotomy (lteSucc p)             = f (lteDichotomy p)
   where f : Either (l = k) (LT l k) -> Either ((S l) = (S k)) (LT (S l) (S k))
         f (Left p) = Left (eqSucc _ _ p)
         f (Right p) = Right (lteSucc p)
@@ -76,3 +74,12 @@ trichotomy n m with (dichotomy n m)
                                  | Left a = Left (lteDichotomy a)
                                  | Right b = Right b
 
+--------------------------------------------------------------------------------
+-- Proofs
+--------------------------------------------------------------------------------
+
+lteN_lemma_1 = proof {
+  intros
+  rewrite (cong2 {f=LTE} (plusCommutative n 0) (plusCommutative n 0))
+  trivial
+}
